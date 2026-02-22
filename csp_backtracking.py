@@ -61,9 +61,7 @@ def main():
     for i in range(n_constraints):
         constraint_input = input(f"Constraint {i+1}: ")
 
-        # Create a lambda dynamically
-        # It receives a dict called `a` representing assignment
-        # e.g., lambda a: "A" not in a or "B" not in a or a["A"] != a["B"]
+       
         def make_constraint(expr):
             return lambda a: eval(expr, {}, a)
         
@@ -79,3 +77,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+output :
+Enter number of variables: 2
+Variable name: A
+Enter domain values for A (comma-separated): 1,2,3
+Variable name: B
+Enter domain values for B (comma-separated): 1,2,3
+Enter number of constraints: 1
+Constraint 1: A != B
+Solution found:
+{'A': 1, 'B': 2}
+
