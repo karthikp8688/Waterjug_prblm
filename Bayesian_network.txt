@@ -1,0 +1,54 @@
+
+import numpy as np
+import pandas as pd
+from pgmpy.models import BayesianModel
+from pgmpy.inference import VariableElimination
+from pgmpy.estimators import MaximumLikelihoodEstimator
+
+# Create separate lists (same length)
+rain = ['yes', 'no', 'yes', 'no', 'yes', 'no']
+traffic = ['yes', 'yes', 'no', 'no', '?', 'yes']
+late = ['yes', 'yes', 'no', 'no', 'yes', '?']
+
+# Create DataFrame
+data = pd.DataFrame({
+    'Rain': rain,
+    'TrafficJam': traffic,
+    'ArriveLate': late
+})
+
+print("Original Data:\n", data)
+
+#  Replace '?' with NaN
+data = data.replace('?', np.nan)
+
+# Drop missing values
+data = data.dropna()
+
+print("\nCleaned Data:\n", data)
+
+# Define Bayesian Network
+model = BayesianModel([
+    ('Rain', 'TrafficJam'),
+    ('TrafficJam', 'ArriveLate')
+])
+
+# Train model
+model.fit(data, estimator=MaximumLikelihoodEstimator)
+
+#Inference
+infer = VariableElimination(model)
+
+# Query
+result = infer.query(variables=['ArriveLate'], evidence={'Rain': 'yes'})
+
+print("\nFinal Output:\n", result)
+
+
+output :
++-------------------+----------------------+
+| ArriveLate        | phi(ArriveLate)      |
++===================+======================+
+| ArriveLate(no)    |        0.50          |
+| ArriveLate(yes)   |        0.50          |
++-------------------+----------------------+
